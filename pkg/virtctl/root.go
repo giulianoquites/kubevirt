@@ -18,6 +18,7 @@ import (
 
 	"kubevirt.io/kubevirt/pkg/virtctl/adm"
 	"kubevirt.io/kubevirt/pkg/virtctl/clientconfig"
+	"kubevirt.io/kubevirt/pkg/virtctl/clone"
 	"kubevirt.io/kubevirt/pkg/virtctl/configuration"
 	"kubevirt.io/kubevirt/pkg/virtctl/console"
 	"kubevirt.io/kubevirt/pkg/virtctl/create"
@@ -105,6 +106,7 @@ func NewVirtctlCommandFn() *cobra.Command {
 	rootCmd.AddCommand(
 		configuration.NewListPermittedDevices(),
 		console.NewCommand(),
+		clone.NewCommand(),
 		usbredir.NewCommand(),
 		vnc.NewCommand(),
 		scp.NewCommand(),
