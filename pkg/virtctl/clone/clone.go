@@ -7,10 +7,9 @@ import (
 	"github.com/spf13/cobra"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/client-go/tools/clientcmd"
 
 	clonev1 "kubevirt.io/api/clone/v1beta1"
-	"kubevirt.io/client-go/kubecli"
+	"kubevirt.io/kubevirt/pkg/virtctl/clientconfig"
 )
 
 func NewCommand() *cobra.Command {
@@ -33,17 +32,7 @@ func NewCommand() *cobra.Command {
 }
 
 func run(cmd *cobra.Command) error {
-	virtClient, err := kubecli.GetKubevirtClient()
-	if err != nil {
-		return err
-	}
-
-	// Correct way to get namespace from kubeconfig
-	loadingRules := clientcmd.NewDefaultClientConfigLoadingRules()
-	configOverrides := &clientcmd.ConfigOverrides{}
-	kubeConfig := clientcmd.NewNonInteractiveDeferredLoadingClientConfig(loadingRules, configOverrides)
-
-	namespace, _, err := kubeConfig.Namespace()
+	virtClient, namespace, _, err := clientconfig.ClientAndNamespaceFromContext(cmd.Context())
 	if err != nil {
 		return err
 	}
