@@ -13,7 +13,7 @@ import (
 	"kubevirt.io/client-go/kubecli"
 )
 
-func NewCloneCommand() *cobra.Command {
+func NewCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "clone",
 		Short: "Clone a VirtualMachine.",
