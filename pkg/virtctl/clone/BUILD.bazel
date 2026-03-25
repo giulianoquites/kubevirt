@@ -2,14 +2,18 @@ load("@io_bazel_rules_go//go:def.bzl", "go_library")
 
 go_library(
     name = "go_default_library",
-    srcs = ["clone.go"], # Substitua pelo nome real do seu arquivo .go
-    importpath = "kubevirt.io/kubevirt/pkg/virtctl/clone", # Caminho de importação do seu pacote
+    srcs = ["clone.go"],
+    importpath = "kubevirt.io/kubevirt/pkg/virtctl/clone",
     visibility = ["//visibility:public"],
     deps = [
         "@com_github_spf13_cobra//:go_default_library",
         "@io_k8s_api//core/v1:go_default_library",
         "@io_k8s_apimachinery//pkg/apis/meta/v1:go_default_library",
-        "@io_kubevirt_api//clone/v1alpha1:go_default_library",
-        "//pkg/virtctl/templates:go_default_library",
+
+        # API correta do clone
+        "@io_kubevirt_api//clone/v1beta1:go_default_library",
+
+        #client do kubevirt
+        "@io_kubevirt_client_go//kubecli:go_default_library",
     ],
 )
