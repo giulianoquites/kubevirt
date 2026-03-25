@@ -37,7 +37,12 @@ func run(cmd *cobra.Command) error {
 		return err
 	}
 
-	namespace, _, err := kubecli.GetNamespace()
+	config, err := kubecli.GetKubevirtClientConfig()
+	if err != nil {
+		return err
+	}
+
+	namespace, _, err := config.Namespace()
 	if err != nil {
 		return err
 	}
