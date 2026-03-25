@@ -7,6 +7,7 @@ import (
 	"github.com/spf13/cobra"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/client-go/tools/clientcmd"
 
 	clonev1 "kubevirt.io/api/clone/v1beta1"
 	"kubevirt.io/client-go/kubecli"
@@ -15,15 +16,15 @@ import (
 func NewCloneCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "clone",
-		Short: "Clona uma VirtualMachine.",
+		Short: "Clone a VirtualMachine.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return run(cmd)
 		},
 	}
 
-	cmd.Flags().String("name", "", "Nome do recurso de clone")
-	cmd.Flags().String("source", "", "Nome da VM de origem")
-	cmd.Flags().String("target", "", "Nome da VM destino")
+	cmd.Flags().String("name", "", "Name of the clone resource")
+	cmd.Flags().String("source", "", "Source VM name")
+	cmd.Flags().String("target", "", "Target VM name")
 
 	_ = cmd.MarkFlagRequired("source")
 	_ = cmd.MarkFlagRequired("target")
@@ -37,12 +38,12 @@ func run(cmd *cobra.Command) error {
 		return err
 	}
 
-	config, err := kubecli.GetKubevirtClientConfig()
-	if err != nil {
-		return err
-	}
+	// Correct way to get namespace from kubeconfig
+	loadingRules := clientcmd.NewDefaultClientConfigLoadingRules()
+	configOverrides := &clientcmd.ConfigOverrides{}
+	kubeConfig := clientcmd.NewNonInteractiveDeferredLoadingClientConfig(loadingRules, configOverrides)
 
-	namespace, _, err := config.Namespace()
+	namespace, _, err := kubeConfig.Namespace()
 	if err != nil {
 		return err
 	}
@@ -82,9 +83,9 @@ func run(cmd *cobra.Command) error {
 		Into(result)
 
 	if err != nil {
-		return fmt.Errorf("falha ao criar clone: %v", err)
+		return fmt.Errorf("failed to create clone: %v", err)
 	}
 
-	fmt.Printf("VirtualMachineClone '%s' criado com sucesso!\n", result.Name)
+	fmt.Printf("VirtualMachineClone '%s' created successfully!\n", result.Name)
 	return nil
 }
