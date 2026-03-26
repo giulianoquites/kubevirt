@@ -121,7 +121,6 @@ func run(cmd *cobra.Command) error {
 		spec.AnnotationFilters = annotationFilters
 	}
 
-	// ⚠️ IMPORTANTE: NÃO é ponteiro
 	if len(tmplLabelFilters) > 0 || len(tmplAnnotationFilters) > 0 {
 		spec.Template = clonev1.VirtualMachineCloneTemplateFilters{
 			LabelFilters:      tmplLabelFilters,
