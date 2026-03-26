@@ -22,11 +22,12 @@ func NewCommand() *cobra.Command {
 		},
 	}
 
+	// Required
 	cmd.Flags().String("name", "", "Name of the clone resource")
 	cmd.Flags().String("source", "", "Source VM name")
 	cmd.Flags().String("target", "", "Target VM name")
 
-	// Optional flags
+	// Optional
 	cmd.Flags().StringSlice("label-filter", nil, "Label filters")
 	cmd.Flags().StringSlice("annotation-filter", nil, "Annotation filters")
 
@@ -58,7 +59,7 @@ func run(cmd *cobra.Command) error {
 		name = fmt.Sprintf("clone-%s", source)
 	}
 
-	// Read optional flags
+	// Optional flags
 	labelFilters, _ := cmd.Flags().GetStringSlice("label-filter")
 	annotationFilters, _ := cmd.Flags().GetStringSlice("annotation-filter")
 
@@ -70,7 +71,7 @@ func run(cmd *cobra.Command) error {
 
 	patches, _ := cmd.Flags().GetStringSlice("patch")
 
-	// Base spec (minimal and safe)
+	// Base spec
 	spec := clonev1.VirtualMachineCloneSpec{
 		Source: &corev1.TypedLocalObjectReference{
 			APIGroup: pointer.String("kubevirt.io"),
@@ -94,8 +95,9 @@ func run(cmd *cobra.Command) error {
 		spec.AnnotationFilters = annotationFilters
 	}
 
+	// ✅ CORREÇÃO AQUI (sem ponteiro)
 	if len(tmplLabelFilters) > 0 || len(tmplAnnotationFilters) > 0 {
-		spec.Template = &clonev1.VirtualMachineCloneTemplateFilters{
+		spec.Template = clonev1.VirtualMachineCloneTemplateFilters{
 			LabelFilters:      tmplLabelFilters,
 			AnnotationFilters: tmplAnnotationFilters,
 		}
