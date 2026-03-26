@@ -9,7 +9,14 @@ go_library(
         "@com_github_spf13_cobra//:go_default_library",
         "@io_k8s_api//core/v1:go_default_library",
         "@io_k8s_apimachinery//pkg/apis/meta/v1:go_default_library",
+
+        # Clone API
         "@io_kubevirt_api//clone/v1beta1:go_default_library",
+
+        # KubeVirt client
         "@io_kubevirt_client_go//kubecli:go_default_library",
+
+        #
+        "//pkg/virtctl/clientconfig:go_default_library",
     ],
 )
