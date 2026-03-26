@@ -9,7 +9,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	clonev1 "kubevirt.io/api/clone/v1beta1"
-	"kubevirt.io/client-go/kubecli"
+	"kubevirt.io/kubevirt/pkg/virtctl/clientconfig"
 )
 
 // ----------------------------
@@ -28,9 +28,6 @@ virtctl clone --source vm1 --target vm2
 
 # Clone with MAC address
 virtctl clone --source vm1 --target vm2 --mac eth0=02:00:00:aa:bb:cc
-
-# Clone with serial
-virtctl clone --source vm1 --target vm2 --serial my-serial
 `,
 
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -67,12 +64,7 @@ virtctl clone --source vm1 --target vm2 --serial my-serial
 
 func run(cmd *cobra.Command) error {
 
-	virtClient, err := kubecli.GetKubevirtClient()
-	if err != nil {
-		return err
-	}
-
-	namespace, _, err := kubecli.GetNamespace()
+	virtClient, namespace, _, err := clientconfig.ClientAndNamespaceFromContext(cmd.Context())
 	if err != nil {
 		return err
 	}
@@ -120,9 +112,7 @@ func run(cmd *cobra.Command) error {
 		},
 	}
 
-	// ----------------------------
 	// Optional fields
-	// ----------------------------
 
 	if len(labelFilters) > 0 {
 		vmClone.Spec.LabelFilters = labelFilters
