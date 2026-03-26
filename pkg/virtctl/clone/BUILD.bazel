@@ -10,10 +10,13 @@ go_library(
         "@io_k8s_api//core/v1:go_default_library",
         "@io_k8s_apimachinery//pkg/apis/meta/v1:go_default_library",
 
-        # API correta do clone
+        # Clone API (correta)
         "@io_kubevirt_api//clone/v1beta1:go_default_library",
 
-        #client do kubevirt
+        # KubeVirt client
         "@io_kubevirt_client_go//kubecli:go_default_library",
+
+        #library
+        "//pkg/virtctl/clientconfig:go_default_library",
     ],
 )
