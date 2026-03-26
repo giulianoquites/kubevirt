@@ -62,14 +62,9 @@ func run(cmd *cobra.Command) error {
 		},
 	}
 
-	result := &clonev1.VirtualMachineClone{}
-
-	err = virtClient.RestClient().
-    	Post().
-    	AbsPath(fmt.Sprintf("/apis/clone.kubevirt.io/v1beta1/namespaces/%s/virtualmachineclones", namespace)).
-    	Body(vmClone).
-   		Do(context.Background()).
-    	Into(result)
+	// ✅ CLIENT TIPADO (correto)
+	result, err := virtClient.VirtualMachineClone(namespace).
+		Create(context.Background(), vmClone, metav1.CreateOptions{})
 
 	if err != nil {
 		return fmt.Errorf("failed to create clone: %v", err)
