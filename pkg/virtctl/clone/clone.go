@@ -7,6 +7,7 @@ import (
 	"github.com/spf13/cobra"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/utils/pointer"
 
 	clonev1 "kubevirt.io/api/clone/v1beta1"
 	"kubevirt.io/kubevirt/pkg/virtctl/clientconfig"
@@ -52,17 +53,18 @@ func run(cmd *cobra.Command) error {
 		},
 		Spec: clonev1.VirtualMachineCloneSpec{
 			Source: &corev1.TypedLocalObjectReference{
-				Kind: "VirtualMachine",
-				Name: source,
+				APIGroup: pointer.String("kubevirt.io"),
+				Kind:     "VirtualMachine",
+				Name:     source,
 			},
 			Target: &corev1.TypedLocalObjectReference{
-				Kind: "VirtualMachine",
-				Name: target,
+				APIGroup: pointer.String("kubevirt.io"),
+				Kind:     "VirtualMachine",
+				Name:     target,
 			},
 		},
 	}
 
-	// ✅ CLIENT TIPADO (correto)
 	result, err := virtClient.VirtualMachineClone(namespace).
 		Create(context.Background(), vmClone, metav1.CreateOptions{})
 
