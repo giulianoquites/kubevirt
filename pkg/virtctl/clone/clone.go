@@ -48,6 +48,10 @@ virtctl clone \
 		},
 	}
 
+	// 🔥 FIX PARA MOSTRAR FLAGS NO HELP
+	cmd.Flags().SortFlags = false
+	cmd.SetUsageTemplate(cobra.Command{}.UsageTemplate())
+
 	// Required flags
 	cmd.Flags().String("name", "", "Name of the VirtualMachineClone resource (default: clone-<source>)")
 	cmd.Flags().String("source", "", "Source VirtualMachine name")
