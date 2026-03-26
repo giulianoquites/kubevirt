@@ -16,28 +16,54 @@ import (
 func NewCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "clone",
-		Short: "Clone a VirtualMachine.",
+		Short: "Clone a VirtualMachine",
+		Long: `Clone a VirtualMachine using KubeVirt VirtualMachineClone resource.
+
+This command creates a clone of an existing VirtualMachine into a new one.
+It supports optional customization such as labels, annotations, MAC addresses,
+SMBIOS serial, and JSON patches.`,
+		Example: `
+# Basic clone
+virtctl clone --source vm1 --target vm2
+
+# Clone with MAC address
+virtctl clone --source vm1 --target vm2 \
+  --mac eth0=02:00:00:aa:bb:cc
+
+# Clone with filters
+virtctl clone --source vm1 --target vm2 \
+  --label-filter "*" \
+  --annotation-filter "!network/*"
+
+# Clone with everything
+virtctl clone \
+  --source vm1 \
+  --target vm2 \
+  --mac eth0=02:00:00:aa:bb:cc \
+  --serial my-serial \
+  --patch '{"op":"add","path":"/metadata/labels/test","value":"ok"}'
+`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return run(cmd)
 		},
 	}
 
-	// Required
-	cmd.Flags().String("name", "", "Name of the clone resource")
-	cmd.Flags().String("source", "", "Source VM name")
-	cmd.Flags().String("target", "", "Target VM name")
+	// Required flags
+	cmd.Flags().String("name", "", "Name of the VirtualMachineClone resource (default: clone-<source>)")
+	cmd.Flags().String("source", "", "Source VirtualMachine name")
+	cmd.Flags().String("target", "", "Target VirtualMachine name")
 
-	// Optional
-	cmd.Flags().StringSlice("label-filter", nil, "Label filters")
-	cmd.Flags().StringSlice("annotation-filter", nil, "Annotation filters")
+	// Optional flags
+	cmd.Flags().StringSlice("label-filter", nil, "Label filters to include/exclude (e.g. '*', '!key/*')")
+	cmd.Flags().StringSlice("annotation-filter", nil, "Annotation filters to include/exclude")
 
 	cmd.Flags().StringSlice("template-label-filter", nil, "Template label filters")
 	cmd.Flags().StringSlice("template-annotation-filter", nil, "Template annotation filters")
 
-	cmd.Flags().StringToString("mac", nil, "New MAC addresses (ex: eth0=02:00:00:aa:bb:cc)")
-	cmd.Flags().String("serial", "", "New SMBIOS serial")
+	cmd.Flags().StringToString("mac", nil, "New MAC addresses (e.g. eth0=02:00:00:aa:bb:cc)")
+	cmd.Flags().String("serial", "", "New SMBIOS serial number")
 
-	cmd.Flags().StringSlice("patch", nil, "JSON patches")
+	cmd.Flags().StringSlice("patch", nil, "JSON patches to customize the cloned VM")
 
 	_ = cmd.MarkFlagRequired("source")
 	_ = cmd.MarkFlagRequired("target")
@@ -95,7 +121,7 @@ func run(cmd *cobra.Command) error {
 		spec.AnnotationFilters = annotationFilters
 	}
 
-	// ✅ CORREÇÃO AQUI (sem ponteiro)
+	// ⚠️ IMPORTANTE: NÃO é ponteiro
 	if len(tmplLabelFilters) > 0 || len(tmplAnnotationFilters) > 0 {
 		spec.Template = clonev1.VirtualMachineCloneTemplateFilters{
 			LabelFilters:      tmplLabelFilters,
