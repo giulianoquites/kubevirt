@@ -17,22 +17,14 @@
  *
  */
 
-package hypervisor
+package mshv_test
 
 import (
-	v1 "kubevirt.io/api/core/v1"
+	"testing"
 
-	"kubevirt.io/kubevirt/pkg/hypervisor/kvm"
-	"kubevirt.io/kubevirt/pkg/hypervisor/mshv"
-	convertertypes "kubevirt.io/kubevirt/pkg/virt-launcher/virtwrap/converter/types"
+	"kubevirt.io/client-go/testutils"
 )
 
-func MakeDomainBuilder(hypervisor string, vmi *v1.VirtualMachineInstance, c *convertertypes.ConverterContext) *convertertypes.DomainBuilder {
-	switch hypervisor {
-	case v1.HyperVDirectHypervisorName:
-		return mshv.MakeDomainBuilder(vmi, c)
-	// Other hypervisors can be added here
-	default:
-		return kvm.MakeDomainBuilder(vmi, c)
-	}
+func TestMshv(t *testing.T) {
+	testutils.KubeVirtTestSuiteSetup(t)
 }

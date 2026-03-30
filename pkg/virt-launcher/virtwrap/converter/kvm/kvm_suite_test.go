@@ -14,21 +14,17 @@
  * limitations under the License.
  *
  * Copyright The KubeVirt Authors.
+ *
  */
 
-package recordingrules
+package kvm_test
 
-import "github.com/rhobs/operator-observability-toolkit/pkg/operatorrules"
+import (
+	"testing"
 
-func Register(registry *operatorrules.Registry, namespace string) error {
-	return registry.RegisterRecordingRules(
-		apiRecordingRules,
-		nodesRecordingRules,
-		operatorRecordingRules,
-		virtRecordingRules(namespace),
-		vmRecordingRules,
-		vmiRecordingRules,
-		vmsnapshotRecordingRules,
-		deprecatedRecordingRules,
-	)
+	"kubevirt.io/client-go/testutils"
+)
+
+func TestKVM(t *testing.T) {
+	testutils.KubeVirtTestSuiteSetup(t)
 }
